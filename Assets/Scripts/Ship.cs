@@ -32,7 +32,23 @@ public abstract class Ship : MonoBehaviour
     
     protected GameManager GameManager { get; private set; }
 
-    public abstract void CalculateRound();
+    public virtual void CalculateRound()
+    {
+        switch (Action)
+        {
+            case Actions.Attack:
+                if (Target != null && Target.IsAlive)
+                {
+                    Attack(Target);
+                }
+                break;
+            case Actions.Repair:
+                Repair();
+                break;
+            default:
+                throw new NotSupportedException();
+        }
+    }
 
     public virtual IEnumerable<Ship> GetAvailableTargets()
     {

@@ -24,9 +24,10 @@ public class EnemyShip : Ship
             }
             else
             {
-                Repair();
+                SetAction(Actions.Repair);
             }
         }
+        base.CalculateRound();
     }
 
     private void AttackPlayer()
@@ -37,7 +38,8 @@ public class EnemyShip : Ship
             .FirstOrDefault();
         if (target != null)
         {
-            Attack(target);
+            SetTarget(target);
+            SetAction(Actions.Attack);
         }
     }
 
