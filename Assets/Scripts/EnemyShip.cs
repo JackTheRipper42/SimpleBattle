@@ -43,8 +43,7 @@ public class EnemyShip : Ship
 
     protected override void Start()
     {
-        base.Start();
-        transform.name = string.Format("Enemy - {0}", ShipName);
+        base.Start();       
         var text = GetComponentInChildren<Text>();
         text.text = ShipName;
     }

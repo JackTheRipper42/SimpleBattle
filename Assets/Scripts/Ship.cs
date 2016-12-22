@@ -90,6 +90,17 @@ public abstract class Ship : MonoBehaviour
     {
         Health = MaxHealth;
         GameManager = FindObjectOfType<GameManager>();
+        switch (Side)
+        {
+            case Side.Bluefor:
+                transform.name = string.Format("Player - {0}", ShipName);
+                break;
+            case Side.Redfor:
+                transform.name = string.Format("Enemy - {0}", ShipName);
+                break;
+            default:
+                throw new NotSupportedException();
+        }
     }
 
     protected virtual void Update()

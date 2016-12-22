@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 public class PlayerShip : Ship
 {
@@ -25,11 +23,5 @@ public class PlayerShip : Ship
             default:
                 throw new NotSupportedException();
         }
-    }
-
-    protected override void Start()
-    {
-        base.Start();
-        transform.name = string.Format("Player - {0}", ShipName);        
     }
 }
