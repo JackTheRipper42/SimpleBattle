@@ -14,41 +14,45 @@ public class GameManager : MonoBehaviour
     public GameObject PlayerShipUIPrefab;
         
     private readonly List<PlayerShipUI> _playerShipControls;
-    private readonly List<EnemyShip> _enemyShips;
-    private readonly List<PlayerShip> _playerShips;
+    private readonly List<Ship> _ships;
 
     private Dialog _dialog;
 
     public GameManager()
     {
-        _enemyShips = new List<EnemyShip>();
-        _playerShips = new List<PlayerShip>();
         _playerShipControls = new List<PlayerShipUI>();
+        _ships = new List<Ship>();
     }
 
-    public List<EnemyShip> EnemyShips
+    public IEnumerable<Ship> Ships
     {
-        get { return _enemyShips; }
+        get { return _ships; }
     }
 
-    public List<PlayerShip> PlayerShips
+    private IEnumerable<Ship> PlayerShips
     {
-        get { return _playerShips; }
+        get { return Ships.Where(ship => ship.Side == Side.Bluefor); }
     }
+
+    private IEnumerable<Ship> EnemyShips
+    {
+        get { return Ships.Where(ship => ship.Side == Side.Redfor); }
+    }
+        
 
     private void Start()
     {
         RoundButton.onClick.AddListener(RoundClicked);
 
-        PlayerShips.Clear();
-        PlayerShips.AddRange(FindObjectsOfType<PlayerShip>());
+        var playerShips = FindObjectsOfType<PlayerShip>();
+        _ships.Clear();
+        _ships.AddRange(playerShips);
         _playerShipControls.Clear();
-        for (var index = 0; index < PlayerShips.Count; index++)
+        for (var index = 0; index < playerShips.Length; index++)
         {
-            _playerShipControls.Add(CreatePlayerShipControl(PlayerShips[index], index));
+            _playerShipControls.Add(CreatePlayerShipControl(playerShips[index], index));
         }
-        EnemyShips.Clear();
-        EnemyShips.AddRange(FindObjectsOfType<EnemyShip>());
+        _ships.AddRange(FindObjectsOfType<EnemyShip>());
         _dialog = FindObjectOfType<Dialog>();
 
         StartCoroutine(StartMission());
@@ -84,7 +88,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator CalculateRound()
     {
-        foreach (var playerShip in _playerShips)
+        foreach (var playerShip in PlayerShips)
         {
             playerShip.CalculateRound();
         }
@@ -126,14 +130,14 @@ public class GameManager : MonoBehaviour
             _playerShipControls.Remove(playerShipControl);
             Destroy(playerShipControl.gameObject);
 
-            PlayerShips.Remove(ship);
+            _ships.Remove(ship);
             Destroy(ship.gameObject);
         }
 
         var deadEnemyShips = EnemyShips.Where(ship => !ship.IsAlive).ToList();
         foreach (var ship in deadEnemyShips)
         {
-            EnemyShips.Remove(ship);
+            _ships.Remove(ship);
             Destroy(ship.gameObject);
         }
     }

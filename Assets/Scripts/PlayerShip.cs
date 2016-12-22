@@ -4,6 +4,10 @@ using System.Linq;
 
 public class PlayerShip : Ship
 {
+    public PlayerShip()
+        : base(Side.Bluefor)
+    {        
+    }
 
     public override void CalculateRound()
     {
@@ -21,11 +25,6 @@ public class PlayerShip : Ship
             default:
                 throw new NotSupportedException();
         }
-    }
-
-    public override IEnumerable<Ship> GetAvailableTargets()
-    {
-        return GameManager.EnemyShips.Cast<Ship>();
     }
 
     protected override void Start()

@@ -5,6 +5,11 @@ using Random = UnityEngine.Random;
 
 public class EnemyShip : Ship
 {
+    public EnemyShip()
+        : base(Side.Redfor)
+    {        
+    }
+
     public override void CalculateRound()
     {
         if (Health/MaxHealth > 0.6f)
@@ -24,14 +29,9 @@ public class EnemyShip : Ship
         }
     }
 
-    public override IEnumerable<Ship> GetAvailableTargets()
-    {
-        return GameManager.PlayerShips.Cast<Ship>();
-    }
-
     private void AttackPlayer()
     {
-        var target = GameManager.PlayerShips
+        var target = GetAvailableTargets()
             .Where(ship => ship.IsAlive)
             .OrderBy(ship => ship.Health)
             .FirstOrDefault();

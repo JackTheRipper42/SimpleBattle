@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class Ship : MonoBehaviour
@@ -10,6 +11,11 @@ public abstract class Ship : MonoBehaviour
     public string ShipName;
     public float HealthBarWidth = 100f;
     public Texture HealthBarTexture;
+
+    protected Ship(Side side)
+    {
+        Side = side;
+    }
 
     public bool IsAlive
     {
@@ -22,11 +28,16 @@ public abstract class Ship : MonoBehaviour
 
     public Actions Action { get; private set; }
 
+    public Side Side { get; private set; }
+    
     protected GameManager GameManager { get; private set; }
 
     public abstract void CalculateRound();
 
-    public abstract IEnumerable<Ship> GetAvailableTargets();
+    public virtual IEnumerable<Ship> GetAvailableTargets()
+    {
+        return GameManager.Ships.Where(ship => ship.Side != Side);
+    }
 
     public virtual bool CanRepair()
     {
