@@ -1,17 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class PlayerShip : Ship
 {
-    public EnemyShip Target { get; set; }
-
-    public Actions Action { get; set; }
 
     public override void CalculateRound()
     {
         switch (Action)
         {
             case Actions.Attack:
-                Attack(Target);
+                if (Target != null && Target.IsAlive)
+                {
+                    Attack(Target);
+                }
                 break;
             case Actions.Repair:
                 Repair();
@@ -19,6 +21,11 @@ public class PlayerShip : Ship
             default:
                 throw new NotSupportedException();
         }
+    }
+
+    public override IEnumerable<Ship> GetAvailableTargets()
+    {
+        return GameManager.EnemyShips.Cast<Ship>();
     }
 
     protected override void Start()

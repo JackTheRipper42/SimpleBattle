@@ -1,38 +1,69 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class Ship : MonoBehaviour
 {
-    protected const float MaxHealth = 100;
-    protected const float MaxDamage = MaxHealth;
-    protected const float MaxRepairSpeed = MaxHealth;
-
-    [Range(0, MaxHealth)] public float Health = MaxHealth;
-
-    [Range(0, MaxDamage)] public float Damage = MaxDamage/8;
-
-    [Range(0, MaxRepairSpeed)] public float RepairSpeed = MaxRepairSpeed/20;
-
+    public float MaxHealth = 100f;
+    public float Damage = 12.5f;
+    public float RepairSpeed = 5f;
     public string ShipName;
-
     public float HealthBarWidth = 100f;
-
     public Texture HealthBarTexture;
-
-    private float _startHealth;
 
     public bool IsAlive
     {
         get { return Health > 0; }
     }
 
-    public bool IsDamaged
-    {
-        get { return Health < _startHealth; }
-    }
+    public float Health { get; private set; }
+
+    public Ship Target { get; private set; }
+
+    public Actions Action { get; private set; }
 
     protected GameManager GameManager { get; private set; }
 
     public abstract void CalculateRound();
+
+    public abstract IEnumerable<Ship> GetAvailableTargets();
+
+    public virtual bool CanRepair()
+    {
+        return Health < MaxHealth;
+    }
+
+    public virtual bool CanAttack()
+    {
+        return true;
+    }
+
+    public virtual void SetTarget(Ship target)
+    {
+        Target = target;
+    }
+
+    public void SetAction(Actions action)
+    {
+        switch (action)
+        {
+            case Actions.Attack:
+                if (!CanAttack())
+                {
+                    throw new InvalidOperationException("The ship cannot attack.");
+                }
+                break;
+            case Actions.Repair:
+                if (!CanRepair())
+                {
+                    throw new InvalidOperationException("The ship cannot repair.");
+                }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException("action", action, null);
+        }
+        Action = action;
+    }
 
     protected virtual void Attack(Ship target)
     {
@@ -46,13 +77,13 @@ public abstract class Ship : MonoBehaviour
 
     protected virtual void Start()
     {
-        _startHealth = Health;
+        Health = MaxHealth;
         GameManager = FindObjectOfType<GameManager>();
     }
 
     protected virtual void Update()
     {
         var childRenderer = GetComponentInChildren<Renderer>();
-        childRenderer.material.color = Color.Lerp(Color.red, Color.green, Health/_startHealth);
+        childRenderer.material.color = Color.Lerp(Color.red, Color.green, Health/MaxHealth);
     }
 }

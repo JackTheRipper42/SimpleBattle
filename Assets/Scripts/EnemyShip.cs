@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -21,6 +22,11 @@ public class EnemyShip : Ship
                 Repair();
             }
         }
+    }
+
+    public override IEnumerable<Ship> GetAvailableTargets()
+    {
+        return GameManager.PlayerShips.Cast<Ship>();
     }
 
     private void AttackPlayer()
