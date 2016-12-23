@@ -12,11 +12,12 @@ public class GameManager : MonoBehaviour
     public string MainSceneName;
     public string GameOverSceneName;
     public GameObject PlayerShipUIPrefab;
-        
+
     private readonly List<PlayerShipUI> _playerShipControls;
     private readonly List<Ship> _ships;
 
     private Dialog _dialog;
+    private AI _ai;
 
     public GameManager()
     {
@@ -29,16 +30,16 @@ public class GameManager : MonoBehaviour
         get { return _ships; }
     }
 
-    private IEnumerable<Ship> PlayerShips
+    public IEnumerable<Ship> BlueforShips
     {
         get { return Ships.Where(ship => ship.Side == Side.Bluefor); }
     }
 
-    private IEnumerable<Ship> EnemyShips
+    public IEnumerable<Ship> RedforShips
     {
         get { return Ships.Where(ship => ship.Side == Side.Redfor); }
     }
-        
+
 
     private void Start()
     {
@@ -54,6 +55,7 @@ public class GameManager : MonoBehaviour
         }
         _ships.AddRange(FindObjectsOfType<EnemyShip>());
         _dialog = FindObjectOfType<Dialog>();
+        _ai = new IdiotAI(this);
 
         StartCoroutine(StartMission());
     }
@@ -75,7 +77,7 @@ public class GameManager : MonoBehaviour
         var obj = Instantiate(PlayerShipUIPrefab);
         obj.transform.SetParent(PlayerShipControlParent);
         var rectTransform = (RectTransform) obj.transform;
-        rectTransform.anchoredPosition = new Vector2(0, -200 + index * -60);
+        rectTransform.anchoredPosition = new Vector2(0, -200 + index*-60);
         var playerShipControl = obj.GetComponent<PlayerShipUI>();
         playerShipControl.PlayerShip = playerShip;
         return playerShipControl;
@@ -88,34 +90,33 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator CalculateRound()
     {
-        foreach (var playerShip in PlayerShips)
-        {
-            playerShip.CalculateRound();
-        }
-
-        CheckBattleProgress();
-        CleanUp();
+        UpdateShips(BlueforShips);
 
         yield return new WaitForSecondsRealtime(0.001f);
 
-        foreach (var enemyShip in EnemyShips)
-        {
-            enemyShip.CalculateRound();
-        }
-
-        CheckBattleProgress();
-        CleanUp();
+        _ai.CalculateActions();
+        UpdateShips(RedforShips);
 
         yield return new WaitForSecondsRealtime(0.001f);
     }
 
+    private void UpdateShips(IEnumerable<Ship> ships)
+    {
+        foreach (var ship in ships)
+        {
+            ship.CalculateRound();
+        }
+        CheckBattleProgress();
+        CleanUp();
+    }
+
     private void CheckBattleProgress()
     {
-        if (_playerShipControls.All(control => !control.PlayerShip.IsAlive))
+        if (BlueforShips.All(ship => !ship.IsAlive))
         {
             GameOver();
         }
-        if (EnemyShips.All(ship => !ship.IsAlive))
+        if (RedforShips.All(ship => !ship.IsAlive))
         {
             BattleFinished();
         }
@@ -123,7 +124,7 @@ public class GameManager : MonoBehaviour
 
     private void CleanUp()
     {
-        var deadPlayerShips = PlayerShips.Where(ship => !ship.IsAlive).ToList();
+        var deadPlayerShips = BlueforShips.Where(ship => !ship.IsAlive).ToList();
         foreach (var ship in deadPlayerShips)
         {
             var playerShipControl = _playerShipControls.Single(control => control.PlayerShip == ship);
@@ -134,7 +135,7 @@ public class GameManager : MonoBehaviour
             Destroy(ship.gameObject);
         }
 
-        var deadEnemyShips = EnemyShips.Where(ship => !ship.IsAlive).ToList();
+        var deadEnemyShips = RedforShips.Where(ship => !ship.IsAlive).ToList();
         foreach (var ship in deadEnemyShips)
         {
             _ships.Remove(ship);
@@ -150,5 +151,5 @@ public class GameManager : MonoBehaviour
     private void GameOver()
     {
         SceneManager.LoadScene(GameOverSceneName, LoadSceneMode.Single);
-    }       
+    }
 }
