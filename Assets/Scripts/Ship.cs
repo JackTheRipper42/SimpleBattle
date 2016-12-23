@@ -2,19 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class Ship : MonoBehaviour
 {
-    public float MaxHealth = 100f;
-    public float Damage = 12.5f;
-    public float RepairSpeed = 5f;
-    public string ShipName;
-    public float HealthBarWidth = 100f;
-    public Texture HealthBarTexture;
-
-    protected Ship(Side side)
+    [SerializeField] private float _maxHealth = 100f;
+    [SerializeField] private float _damage = 12.5f;
+    [SerializeField] private float _repairSpeed = 5f;
+    [SerializeField] private string _shipName;
+    [SerializeField] private Side _side;
+    
+    public float MaxHealth
     {
-        Side = side;
+        get { return _maxHealth; }
+    }
+
+    public float Damage
+    {
+        get { return _damage; }
+    }
+
+    public float RepairSpeed
+    {
+        get { return _repairSpeed; }
+    }
+
+    public string ShipName
+    {
+        get { return _shipName; }
+    }
+    
+    public Side Side
+    {
+        get { return _side; }
     }
 
     public bool IsAlive
@@ -28,8 +48,6 @@ public abstract class Ship : MonoBehaviour
 
     public Actions Action { get; private set; }
 
-    public Side Side { get; private set; }
-    
     protected GameManager GameManager { get; private set; }
 
     public virtual void CalculateRound()
@@ -106,6 +124,8 @@ public abstract class Ship : MonoBehaviour
     {
         Health = MaxHealth;
         GameManager = FindObjectOfType<GameManager>();
+        var text = GetComponentInChildren<Text>();
+        text.text = ShipName;
         switch (Side)
         {
             case Side.Bluefor:

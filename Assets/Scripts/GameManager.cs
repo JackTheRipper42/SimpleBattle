@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -45,15 +46,14 @@ public class GameManager : MonoBehaviour
     {
         RoundButton.onClick.AddListener(RoundClicked);
 
-        var playerShips = FindObjectsOfType<PlayerShip>();
         _ships.Clear();
-        _ships.AddRange(playerShips);
+        _ships.AddRange(FindObjectsOfType<Ship>());
+        var playerShips = BlueforShips.ToArray();
         _playerShipControls.Clear();
         for (var index = 0; index < playerShips.Length; index++)
         {
             _playerShipControls.Add(CreatePlayerShipControl(playerShips[index], index));
         }
-        _ships.AddRange(FindObjectsOfType<EnemyShip>());
         _dialog = FindObjectOfType<Dialog>();
         _ai = new IdiotAI(this);
 
@@ -72,14 +72,14 @@ public class GameManager : MonoBehaviour
         PlayerShipControlParent.gameObject.SetActive(true);
     }
 
-    private PlayerShipUI CreatePlayerShipControl(PlayerShip playerShip, int index)
+    private PlayerShipUI CreatePlayerShipControl(Ship playerShip, int index)
     {
         var obj = Instantiate(PlayerShipUIPrefab);
         obj.transform.SetParent(PlayerShipControlParent);
         var rectTransform = (RectTransform) obj.transform;
         rectTransform.anchoredPosition = new Vector2(0, -200 + index*-60);
         var playerShipControl = obj.GetComponent<PlayerShipUI>();
-        playerShipControl.PlayerShip = playerShip;
+        playerShipControl.Ship = playerShip;
         return playerShipControl;
     }
 
@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
         var deadPlayerShips = BlueforShips.Where(ship => !ship.IsAlive).ToList();
         foreach (var ship in deadPlayerShips)
         {
-            var playerShipControl = _playerShipControls.Single(control => control.PlayerShip == ship);
+            var playerShipControl = _playerShipControls.Single(control => control.Ship == ship);
             _playerShipControls.Remove(playerShipControl);
             Destroy(playerShipControl.gameObject);
 

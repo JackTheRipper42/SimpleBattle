@@ -211,12 +211,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15464cdab1754a04b9e0bee9dd621aa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 60
-  Damage: 12.5
-  RepairSpeed: 5
-  ShipName: Beagle
-  HealthBarWidth: 100
-  HealthBarTexture: {fileID: 10910, guid: 0000000000000000f000000000000000, type: 0}
+  _maxHealth: 60
+  _damage: 12.5
+  _repairSpeed: 5
+  _shipName: 
+  _side: 1
 --- !u!222 &222000011008955214
 CanvasRenderer:
   m_ObjectHideFlags: 1

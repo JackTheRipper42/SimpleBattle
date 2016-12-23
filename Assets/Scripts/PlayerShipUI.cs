@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerShipUI : MonoBehaviour
 {
-    public PlayerShip PlayerShip;
+    public Ship Ship;
     public Text ShipNameText;
     public Dropdown ActionDropdown;
     public Dropdown TargetDropdown;
@@ -25,7 +25,7 @@ public class PlayerShipUI : MonoBehaviour
     protected virtual void Start()
     {
         _actions = new List<Actions>();
-        ShipNameText.text = PlayerShip.ShipName;
+        ShipNameText.text = Ship.ShipName;
 
         UpdateActions();
         UpdateTargetList();
@@ -40,11 +40,11 @@ public class PlayerShipUI : MonoBehaviour
     private void UpdateActions()
     {
         _actions.Clear();
-        if (PlayerShip.CanAttack())
+        if (Ship.CanAttack())
         {
             _actions.Add(Actions.Attack);
         }
-        if (PlayerShip.CanRepair())
+        if (Ship.CanRepair())
         {
             _actions.Add(Actions.Repair);
         }
@@ -56,15 +56,15 @@ public class PlayerShipUI : MonoBehaviour
 
     private void UpdateTargetList()
     {
-        _targets = PlayerShip.GetAvailableTargets().ToList();
+        _targets = Ship.GetAvailableTargets().ToList();
 
         TargetDropdown.onValueChanged.RemoveListener(TargetIndexChanged);
         TargetDropdown.ClearOptions();
         TargetDropdown.AddOptions(_targets.Select(ship => ship.ShipName).ToList());
 
-        if (PlayerShip.Target != null)
+        if (Ship.Target != null)
         {
-            var index = _targets.IndexOf(PlayerShip.Target);
+            var index = _targets.IndexOf(Ship.Target);
             TargetDropdown.value = Math.Max(0, index);
         }
         else
@@ -78,7 +78,7 @@ public class PlayerShipUI : MonoBehaviour
      
     private void ActionIndexChanged(int index)
     {
-        PlayerShip.SetAction(Action);
+        Ship.SetAction(Action);
         switch (Action)
         {
             case Actions.Attack:
@@ -94,6 +94,6 @@ public class PlayerShipUI : MonoBehaviour
 
     private void TargetIndexChanged(int index)
     {
-        PlayerShip.SetTarget(_targets.Count > 0 ? _targets[index] : null);
+        Ship.SetTarget(_targets.Count > 0 ? _targets[index] : null);
     }
 }
