@@ -5,15 +5,14 @@ using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
+[Serializable]
 public class GameManager : MonoBehaviour, IGameManager
 {
-    public RectTransform PlayerShipControlParent;
-    public Button RoundButton;
-    public string MainSceneName;
-    public string GameOverSceneName;
-    public GameObject PlayerShipUIPrefab;
+    [SerializeField] private RectTransform _playerShipControlParent;
+    [SerializeField] private string _mainSceneName;
+    [SerializeField] private string _gameOverSceneName;
+    [SerializeField] private GameObject _playerShipUIPrefab;
 
     private readonly List<PlayerShipUI> _playerShipControls;
     private readonly List<Ship> _ships;
@@ -48,11 +47,29 @@ public class GameManager : MonoBehaviour, IGameManager
     {
         return new DialogContext(_dialog, this);
     }
-    
+
+    protected RectTransform PlayerShipControlParent
+    {
+        get { return _playerShipControlParent; }
+    }
+
+    protected string MainSceneName
+    {
+        get { return _mainSceneName; }
+    }
+
+    protected string GameOverSceneName
+    {
+        get { return _gameOverSceneName; }
+    }
+
+    protected GameObject PlayerShipUIPrefab
+    {
+        get { return _playerShipUIPrefab; }
+    }
+
     private void Start()
     {
-        RoundButton.onClick.AddListener(RoundClicked);
-
         _ships.Clear();
         _ships.AddRange(FindObjectsOfType<Ship>());
         var playerShips = BlueforShips.ToArray();
@@ -80,7 +97,7 @@ public class GameManager : MonoBehaviour, IGameManager
         return playerShipControl;
     }
 
-    private void RoundClicked()
+    public void RoundClicked()
     {
         _calculationRoutine = CalculateRound();
         StartCoroutine(_calculationRoutine);
