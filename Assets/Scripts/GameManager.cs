@@ -4,15 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 [Serializable]
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private RectTransform _playerShipControlParent;
-    [SerializeField] private string _mainSceneName;
-    [SerializeField] private string _gameOverSceneName;
     [SerializeField] private GameObject _playerShipUIPrefab;
+    [SerializeField] private Transform _shipsParent;
 
     private readonly List<PlayerShipUI> _playerShipControls;
     private readonly List<Ship> _ships;
@@ -53,25 +51,24 @@ public class GameManager : MonoBehaviour
         get { return _playerShipControlParent; }
     }
 
-    protected string MainSceneName
-    {
-        get { return _mainSceneName; }
-    }
-
-    protected string GameOverSceneName
-    {
-        get { return _gameOverSceneName; }
-    }
-
     protected GameObject PlayerShipUIPrefab
     {
         get { return _playerShipUIPrefab; }
+    }
+
+    protected Transform ShipsParent
+    {
+        get { return _shipsParent; }
     }
 
     private void Start()
     {
         _ships.Clear();
         _ships.AddRange(FindObjectsOfType<Ship>());
+        foreach (var ship in _ships)
+        {
+            ship.transform.SetParent(ShipsParent);
+        }
         var playerShips = BlueforShips.ToArray();
         _playerShipControls.Clear();
         for (var index = 0; index < playerShips.Length; index++)
@@ -130,11 +127,11 @@ public class GameManager : MonoBehaviour
     {
         if (BlueforShips.All(ship => !ship.IsAlive))
         {
-            StartCoroutine(FinishMission(GameOverSceneName));
+            StartCoroutine(FinishMission(NextScene.GameOver));
         }
         if (RedforShips.All(ship => !ship.IsAlive))
         {
-            StartCoroutine(FinishMission(MainSceneName));
+            StartCoroutine(FinishMission(NextScene.MainMenu));
         }
     }
 
@@ -165,12 +162,23 @@ public class GameManager : MonoBehaviour
         PlayerShipControlParent.gameObject.SetActive(true);
     }
 
-    private IEnumerator FinishMission(string nextSceneName)
+    private IEnumerator FinishMission(NextScene nextScene)
     {
         StopCoroutine(_calculationRoutine);
         PlayerShipControlParent.gameObject.SetActive(false);
         yield return _mission.OnEndMission();
-        SceneManager.LoadScene(nextSceneName, LoadSceneMode.Single);
+        var loader = FindObjectOfType<Loader>();
+        switch (nextScene)
+        {
+            case NextScene.MainMenu:
+                loader.LoadMainMenu();
+                break;
+            case NextScene.GameOver:
+                loader.LoadGameOver();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException("nextScene", nextScene, null);
+        }
     }
 
     private class DialogContext : IDialog
@@ -208,5 +216,11 @@ public class GameManager : MonoBehaviour
         {
             return _dialog.ShowMessage(message);
         }
+    }
+
+    private enum NextScene
+    {
+        MainMenu,
+        GameOver
     }
 }

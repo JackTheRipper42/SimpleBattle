@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
     public Button StartButton;
     public Button ExitButton;
-    public string BattleSceneName;
 
     private void Start()
     {
@@ -16,7 +14,7 @@ public class MainMenu : MonoBehaviour
 
     private void StartClicked()
     {
-        SceneManager.LoadScene(BattleSceneName, LoadSceneMode.Single);
+        FindObjectOfType<Loader>().LoadTestMission();
     }
 
     private void ExitClicked()
