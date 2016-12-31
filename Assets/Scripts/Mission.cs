@@ -1,36 +1,29 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections;
+using UnityEngine;
 
-public abstract class Mission
+public abstract class Mission : MonoBehaviour
 {
-    private readonly IGameManager _gameManager;
-
+    private GameManager _gameManager;
     private bool _baseCalled;
-
-    protected Mission([NotNull] IGameManager gameManager)
-    {
-        if (gameManager == null)
-        {
-            throw new ArgumentNullException("gameManager");
-        }
-
-        _gameManager = gameManager;
-    }
-
-    protected IGameManager GameManager
+    
+    protected GameManager GameManager
     {
         get { return _gameManager; }
     }
 
+    protected virtual void Start()
+    {
+        _gameManager = FindObjectOfType<GameManager>();
+    }
 
-    protected virtual IEnumerator Start()
+    protected virtual IEnumerator StartMission()
     {
         _baseCalled = true;
         yield break;
     }
 
-    protected virtual IEnumerator End()
+    protected virtual IEnumerator EndMission()
     {
         _baseCalled = true;
         yield break;
@@ -60,23 +53,23 @@ public abstract class Mission
         yield break;
     }
 
-    public IEnumerator OnStart()
+    public IEnumerator OnStartMission()
     {
         _baseCalled = false;
-        yield return Start();
+        yield return StartMission();
         if (!_baseCalled)
         {
-            throw new InvalidOperationException("The method base.Start is not called.");
+            throw new InvalidOperationException("The method base.StartMission is not called.");
         }
     }
 
-    public IEnumerator OnEnd()
+    public IEnumerator OnEndMission()
     {
         _baseCalled = false;
-        yield return End();
+        yield return EndMission();
         if (!_baseCalled)
         {
-            throw new InvalidOperationException("The method base.End is not called.");
+            throw new InvalidOperationException("The method base.EndMission is not called.");
         }
     }
 

@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [Serializable]
-public class GameManager : MonoBehaviour, IGameManager
+public class GameManager : MonoBehaviour
 {
     [SerializeField] private RectTransform _playerShipControlParent;
     [SerializeField] private string _mainSceneName;
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour, IGameManager
         PlayerShipControlParent.gameObject.SetActive(false);
         _dialog = FindObjectOfType<Dialog>();
         _ai = new IdiotAI(this);
-        _mission = new TestMission(this);
+        _mission = FindObjectOfType<Mission>();
         
         StartCoroutine(StartMission());
     }
@@ -161,7 +161,7 @@ public class GameManager : MonoBehaviour, IGameManager
 
     private IEnumerator StartMission()
     {
-        yield return _mission.OnStart();
+        yield return _mission.OnStartMission();
         PlayerShipControlParent.gameObject.SetActive(true);
     }
 
@@ -169,7 +169,7 @@ public class GameManager : MonoBehaviour, IGameManager
     {
         StopCoroutine(_calculationRoutine);
         PlayerShipControlParent.gameObject.SetActive(false);
-        yield return _mission.OnEnd();
+        yield return _mission.OnEndMission();
         SceneManager.LoadScene(nextSceneName, LoadSceneMode.Single);
     }
 
