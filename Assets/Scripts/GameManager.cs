@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IGameManager
 {
     public RectTransform PlayerShipControlParent;
     public Button RoundButton;
@@ -19,7 +20,9 @@ public class GameManager : MonoBehaviour
 
     private Dialog _dialog;
     private AI _ai;
-
+    private Mission _mission;
+    private IEnumerator _calculationRoutine;
+    
     public GameManager()
     {
         _playerShipControls = new List<PlayerShipUI>();
@@ -41,7 +44,11 @@ public class GameManager : MonoBehaviour
         get { return Ships.Where(ship => ship.Side == Side.Redfor); }
     }
 
-
+    public IDialog ShowDialog()
+    {
+        return new DialogContext(_dialog, this);
+    }
+    
     private void Start()
     {
         RoundButton.onClick.AddListener(RoundClicked);
@@ -54,22 +61,12 @@ public class GameManager : MonoBehaviour
         {
             _playerShipControls.Add(CreatePlayerShipControl(playerShips[index], index));
         }
+        PlayerShipControlParent.gameObject.SetActive(false);
         _dialog = FindObjectOfType<Dialog>();
         _ai = new IdiotAI(this);
-
+        _mission = new TestMission(this);
+        
         StartCoroutine(StartMission());
-    }
-
-    private IEnumerator StartMission()
-    {
-        PlayerShipControlParent.gameObject.SetActive(false);
-        yield return new WaitForEndOfFrame();
-        //yield return _dialog.ShowMessage("This is a simple battle");
-        //var choices = new[] { "A", "B", "C" };
-        //var result = _dialog.ShowChoices(choices);
-        //yield return result.YieldInstruction;
-        //yield return _dialog.ShowMessage(string.Format("You have selected '{0}'", choices[result.Choise]));
-        PlayerShipControlParent.gameObject.SetActive(true);
     }
 
     private PlayerShipUI CreatePlayerShipControl(Ship playerShip, int index)
@@ -85,19 +82,21 @@ public class GameManager : MonoBehaviour
 
     private void RoundClicked()
     {
-        StartCoroutine(CalculateRound());
+        _calculationRoutine = CalculateRound();
+        StartCoroutine(_calculationRoutine);
     }
 
     private IEnumerator CalculateRound()
     {
+        yield return _mission.OnBeforeBlueforCalculation();
         UpdateShips(BlueforShips);
-
-        yield return new WaitForSecondsRealtime(0.001f);
+        yield return _mission.OnAfterBlueforCalculation();
 
         _ai.CalculateActions();
-        UpdateShips(RedforShips);
 
-        yield return new WaitForSecondsRealtime(0.001f);
+        yield return _mission.OnBeforeRedforCalculation();
+        UpdateShips(RedforShips);
+        yield return _mission.OnAfterRedforCalculation();
     }
 
     private void UpdateShips(IEnumerable<Ship> ships)
@@ -114,11 +113,11 @@ public class GameManager : MonoBehaviour
     {
         if (BlueforShips.All(ship => !ship.IsAlive))
         {
-            GameOver();
+            StartCoroutine(FinishMission(GameOverSceneName));
         }
         if (RedforShips.All(ship => !ship.IsAlive))
         {
-            BattleFinished();
+            StartCoroutine(FinishMission(MainSceneName));
         }
     }
 
@@ -143,13 +142,54 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void BattleFinished()
+    private IEnumerator StartMission()
     {
-        SceneManager.LoadScene(MainSceneName, LoadSceneMode.Single);
+        yield return _mission.OnStart();
+        PlayerShipControlParent.gameObject.SetActive(true);
     }
 
-    private void GameOver()
+    private IEnumerator FinishMission(string nextSceneName)
     {
-        SceneManager.LoadScene(GameOverSceneName, LoadSceneMode.Single);
+        StopCoroutine(_calculationRoutine);
+        PlayerShipControlParent.gameObject.SetActive(false);
+        yield return _mission.OnEnd();
+        SceneManager.LoadScene(nextSceneName, LoadSceneMode.Single);
+    }
+
+    private class DialogContext : IDialog
+    {
+        private readonly GameManager _gameManager;
+        private readonly Dialog _dialog;
+
+        public DialogContext([NotNull] Dialog dialog, [NotNull] GameManager gameManager)
+        {
+            if (dialog == null)
+            {
+                throw new ArgumentNullException("dialog");
+            }
+            if (gameManager == null)
+            {
+                throw new ArgumentNullException("gameManager");
+            }
+
+            _dialog = dialog;
+            _gameManager = gameManager;
+            _gameManager.PlayerShipControlParent.gameObject.SetActive(false);
+        }
+
+        public void Dispose()
+        {
+            _gameManager.PlayerShipControlParent.gameObject.SetActive(true);
+        }
+
+        public ChoiseResult ShowChoices(params string[] choices)
+        {
+            return _dialog.ShowChoices(choices);
+        }
+
+        public CustomYieldInstruction ShowMessage(string message)
+        {
+            return _dialog.ShowMessage(message);
+        }
     }
 }

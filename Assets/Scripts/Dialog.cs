@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,8 +8,6 @@ public class Dialog : MonoBehaviour
 {
     public GameObject ChoisePrefab;
     public GameObject MessagePrefab;
-
-    //private int _selectedIndex;
 
     public CustomYieldInstruction ShowMessage(string message)
     {
@@ -39,42 +36,6 @@ public class Dialog : MonoBehaviour
                 }),
             () => selectedIndex);
     }
-
-    //protected virtual void Start()
-    //{
-    //    StartCoroutine(DialogRoutine());
-    //}
-
-    //private IEnumerator DialogRoutine()
-    //{
-    //    var buttons = new List<Button>();
-    //    _selectedIndex = -1;
-    //    for (int index = 0; index < 4; index++)
-    //    {
-    //        var button = CreateChoiseButton(index);
-    //        var buttonText = button.GetComponentInChildren<Text>();
-    //        buttonText.text = string.Format("option {0}", index);
-    //        var selectedIndex = index;
-    //        button.onClick.AddListener(() => ButtonAction(selectedIndex));
-    //        buttons.Add(button);
-    //    }
-    //    yield return new WaitUntil(() => _selectedIndex >= 0);
-
-    //    foreach (var button in buttons)
-    //    {
-    //        Destroy(button.gameObject);
-    //    }
-
-    //    //var text = CreateMessageText();
-    //    //text.text = string.Format("option {0} was selected", _selectedIndex);
-    //    //yield return new WaitForSecondsRealtime(5f);
-    //    //Destroy(text.gameObject);
-    //}
-
-    //private void ButtonAction(int index)
-    //{
-    //    _selectedIndex = index;
-    //}
 
     private GameObject CreateChoise(int index, string message, UnityAction clickCallback)
     {

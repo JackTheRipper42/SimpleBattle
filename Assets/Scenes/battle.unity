@@ -440,8 +440,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 000257a5874477140b5b6e055b61e40a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChoisePrefab: {fileID: 0}
-  MessagePrefab: {fileID: 0}
+  ChoisePrefab: {fileID: 1000011335515956, guid: c3d786070798071419edcac98b5a95fa,
+    type: 2}
+  MessagePrefab: {fileID: 1000012633048670, guid: de0160aded7a0ca4ba6fb919f6b4ac55,
+    type: 2}
 --- !u!1 &561759529
 GameObject:
   m_ObjectHideFlags: 0
