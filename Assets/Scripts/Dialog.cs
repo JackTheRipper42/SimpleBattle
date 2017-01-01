@@ -11,8 +11,9 @@ public class Dialog : MonoBehaviour
 
     public CustomYieldInstruction ShowMessage(string message)
     {
-        var messageText = CreateMessage(message);
-        return new WaitForMessageFinished(5f, () => Destroy(messageText));
+        var obj = CreateMessage(message);
+        var trigger = obj.GetComponent<MessageTrigger>();
+        return new WaitForFinished(() => trigger.Finished, () => Destroy(obj));
     }
 
     public ChoiseResult ShowChoices(params string[] choices)
@@ -25,7 +26,7 @@ public class Dialog : MonoBehaviour
             choiseGameObjects.Add(CreateChoise(index, choices[index], () => selectedIndex = currentIndex));
         }
         return new ChoiseResult(
-            new WaitForChoiseFinished(
+            new WaitForFinished(
                 () => selectedIndex >= 0,
                 () =>
                 {
@@ -67,38 +68,12 @@ public class Dialog : MonoBehaviour
         return obj;
     }
 
-    private class WaitForMessageFinished : CustomYieldInstruction
-    {
-        private readonly float _waitTime;
-        private Action _callback;
-
-        public override bool keepWaiting
-        {
-            get
-            {
-                var finished = Time.realtimeSinceStartup >= _waitTime;
-                if (finished && _callback != null)
-                {
-                    _callback();
-                    _callback = null;
-                }
-                return !finished;
-            }
-        }
-
-        public WaitForMessageFinished(float time, Action callback)
-        {
-            _callback = callback;
-            _waitTime = Time.realtimeSinceStartup + time;
-        }
-    }
-
-    private class WaitForChoiseFinished : CustomYieldInstruction
+    private class WaitForFinished : CustomYieldInstruction
     {
         private readonly Func<bool> _finished;
         private Action _callback;
 
-        public WaitForChoiseFinished(Func<bool> finished, Action callback)
+        public WaitForFinished(Func<bool> finished, Action callback)
         {
             _finished = finished;
             _callback = callback;
