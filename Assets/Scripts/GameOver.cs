@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameOver : MonoBehaviour
 {
@@ -14,7 +13,7 @@ public class GameOver : MonoBehaviour
     private IEnumerator Wait()
     {
         yield return new WaitForSecondsRealtime(2f);
-        SceneManager.LoadScene(MainSceneName, LoadSceneMode.Single);
+        FindObjectOfType<Loader>().LoadMainMenu();
     }
 }
 
