@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     private Dialog _dialog;
     private AI _ai;
     private Mission _mission;
+    private State _state;
     private IEnumerator _calculationRoutine;
     
     public GameManager()
@@ -44,6 +45,24 @@ public class GameManager : MonoBehaviour
     public IDialog ShowDialog()
     {
         return new DialogContext(_dialog, this);
+    }
+
+    public void FailMission()
+    {
+        if (_state == State.Running)
+        {
+            _state = State.Fail;
+            StartCoroutine(FinishMission());
+        }
+    }
+
+    public void SucceedMission()
+    {
+        if (_state == State.Running)
+        {
+            _state = State.Success;
+            StartCoroutine(FinishMission());
+        }
     }
 
     protected RectTransform PlayerShipControlParent
@@ -79,7 +98,8 @@ public class GameManager : MonoBehaviour
         _dialog = FindObjectOfType<Dialog>();
         _ai = new IdiotAI(this);
         _mission = FindObjectOfType<Mission>();
-        
+        _state = State.Running;
+
         StartCoroutine(StartMission());
     }
 
@@ -127,11 +147,11 @@ public class GameManager : MonoBehaviour
     {
         if (BlueforShips.All(ship => !ship.IsAlive))
         {
-            StartCoroutine(FinishMission(NextScene.GameOver));
+            FailMission();
         }
         if (RedforShips.All(ship => !ship.IsAlive))
         {
-            StartCoroutine(FinishMission(NextScene.MainMenu));
+            SucceedMission();
         }
     }
 
@@ -162,22 +182,22 @@ public class GameManager : MonoBehaviour
         PlayerShipControlParent.gameObject.SetActive(true);
     }
 
-    private IEnumerator FinishMission(NextScene nextScene)
+    private IEnumerator FinishMission()
     {
         StopCoroutine(_calculationRoutine);
         PlayerShipControlParent.gameObject.SetActive(false);
         yield return _mission.OnEndMission();
         var loader = FindObjectOfType<Loader>();
-        switch (nextScene)
+        switch (_state)
         {
-            case NextScene.MainMenu:
+            case State.Success:
                 loader.LoadMainMenu();
                 break;
-            case NextScene.GameOver:
+            case State.Fail:
                 loader.LoadGameOver();
                 break;
             default:
-                throw new ArgumentOutOfRangeException("nextScene", nextScene, null);
+                throw new NotSupportedException();
         }
     }
 
@@ -218,9 +238,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private enum NextScene
+    private enum State
     {
-        MainMenu,
-        GameOver
+        Running,
+        Success,
+        Fail
     }
 }
