@@ -196,7 +196,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000010823524112}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c84efd418245fcf438f308ded9afc0e1, type: 3}
+  m_Script: {fileID: 11500000, guid: 2aa1faeb0e6705a4a929d026df832cef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _maxHealth: 100
@@ -204,6 +204,10 @@ MonoBehaviour:
   _repairSpeed: 5
   _shipName: 
   _side: 0
+  <Health>k__BackingField: 0
+  <Target>k__BackingField: {fileID: 0}
+  <Action>k__BackingField: 0
+  <GameManager>k__BackingField: {fileID: 0}
 --- !u!136 &136000012812407666
 CapsuleCollider:
   m_ObjectHideFlags: 1

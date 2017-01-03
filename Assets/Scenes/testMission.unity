@@ -138,6 +138,11 @@ Prefab:
       propertyPath: _shipName
       value: Pandora II
       objectReference: {fileID: 0}
+    - target: {fileID: 114000014246662952, guid: 1e645bd4d68a42548868b77c18219c34,
+        type: 2}
+      propertyPath: _damage
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e645bd4d68a42548868b77c18219c34, type: 2}
   m_IsPrefabParent: 0
@@ -193,6 +198,16 @@ Prefab:
         type: 2}
       propertyPath: _shipName
       value: Sparrow
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
+        type: 2}
+      propertyPath: _maxHealth
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
+        type: 2}
+      propertyPath: _side
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9b54a6b294dee764c851584b035bbe26, type: 2}
@@ -377,6 +392,11 @@ Prefab:
         type: 2}
       propertyPath: _shipName
       value: Pandora
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000014246662952, guid: 1e645bd4d68a42548868b77c18219c34,
+        type: 2}
+      propertyPath: _damage
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e645bd4d68a42548868b77c18219c34, type: 2}
@@ -567,7 +587,7 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224000010497055372, guid: 4c39ef9cf90a54d46a2f304fea99e753,
     type: 2}
   m_PrefabInternal: {fileID: 743988497}
---- !u!1001 &963068981
+--- !u!1001 &889411832
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -608,13 +628,23 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
         type: 2}
-      propertyPath: ShipName
-      value: Ajax
+      propertyPath: _maxHealth
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
         type: 2}
       propertyPath: _shipName
       value: Ajax
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
+        type: 2}
+      propertyPath: _side
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
+        type: 2}
+      propertyPath: _damage
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9b54a6b294dee764c851584b035bbe26, type: 2}
@@ -671,6 +701,21 @@ Prefab:
         type: 2}
       propertyPath: _shipName
       value: Cyana
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
+        type: 2}
+      propertyPath: _maxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
+        type: 2}
+      propertyPath: _side
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
+        type: 2}
+      propertyPath: _damage
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9b54a6b294dee764c851584b035bbe26, type: 2}
@@ -737,6 +782,16 @@ Prefab:
         type: 2}
       propertyPath: _shipName
       value: Beagle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
+        type: 2}
+      propertyPath: _maxHealth
+      value: 95
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011577598208, guid: 9b54a6b294dee764c851584b035bbe26,
+        type: 2}
+      propertyPath: _side
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9b54a6b294dee764c851584b035bbe26, type: 2}

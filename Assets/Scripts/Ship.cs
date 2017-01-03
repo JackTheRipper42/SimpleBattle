@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class Ship : MonoBehaviour
+public class Ship : MonoBehaviour
 {
     [SerializeField] private float _maxHealth = 100f;
     [SerializeField] private float _damage = 12.5f;
