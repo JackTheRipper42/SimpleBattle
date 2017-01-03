@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private RectTransform _playerShipControlParent;
     [SerializeField] private GameObject _playerShipUIPrefab;
     [SerializeField] private Transform _shipsParent;
+    [SerializeField] private GameObject _blueforShipPrefab;
+    [SerializeField] private GameObject _redforShipPrefab;
 
     private readonly List<PlayerShipUI> _playerShipControls;
     private readonly List<Ship> _ships;
@@ -65,6 +67,64 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public Ship Spawn(ShipDescription description)
+    {
+        GameObject obj;
+        switch (description.Side)
+        {
+            case Side.Bluefor:
+                obj = Instantiate(BlueforShipPrefab);
+                break;
+            case Side.Redfor:
+                obj = Instantiate(RedforShipPrefab);
+                break;
+            default:
+                throw new NotSupportedException();
+        }
+        obj.transform.SetParent(ShipsParent);
+        var ship = obj.GetComponent<Ship>();
+        ship.Initialize(description);
+
+        _ships.Add(ship);
+
+        if (description.Side == Side.Bluefor)
+        {
+            _playerShipControls.Add(CreatePlayerShipControl(ship, _playerShipControls.Count));
+        }
+
+        UpdateShipPositions();
+
+        return ship;
+    }
+
+    private void UpdateShipPositions()
+    {
+        var lowerPosition = Camera.main.ScreenToWorldPoint(new Vector3(0f, 200f, -Camera.main.transform.position.z));
+        lowerPosition.x = 0;
+        lowerPosition.z = 0;
+        var upperPosition = Camera.main.ScreenToWorldPoint(new Vector3(0f, Camera.main.pixelHeight, -Camera.main.transform.position.z));
+        upperPosition.x = 0;
+        upperPosition.z = 0;
+
+        var blueforShips = BlueforShips.ToArray();
+        for (var index = 0; index < blueforShips.Length; index++)
+        {
+            blueforShips[index].transform.position = new Vector3(-8f,0f,0f) + Vector3.Lerp(
+                                                  lowerPosition,
+                                                  upperPosition,
+                                                  (index +1f) / (blueforShips.Length +1));
+        }
+
+        var redforShips = RedforShips.ToArray();
+        for (var index = 0; index < redforShips.Length; index++)
+        {
+            redforShips[index].transform.position = new Vector3(8f, 0f, 0f) + Vector3.Lerp(
+                                                  lowerPosition,
+                                                  upperPosition,
+                                                  (index + 1f) / (redforShips.Length + 1));
+        }
+    }
+
     protected RectTransform PlayerShipControlParent
     {
         get { return _playerShipControlParent; }
@@ -80,6 +140,16 @@ public class GameManager : MonoBehaviour
         get { return _shipsParent; }
     }
 
+    protected GameObject BlueforShipPrefab
+    {
+        get { return _blueforShipPrefab; }
+    }
+
+    protected GameObject RedforShipPrefab
+    {
+        get { return _redforShipPrefab; }
+    }
+    
     private void Start()
     {
         _ships.Clear();
@@ -94,6 +164,7 @@ public class GameManager : MonoBehaviour
         {
             _playerShipControls.Add(CreatePlayerShipControl(playerShips[index], index));
         }
+        UpdateShipPositions();
         PlayerShipControlParent.gameObject.SetActive(false);
         _dialog = FindObjectOfType<Dialog>();
         _ai = new IdiotAI(this);

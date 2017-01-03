@@ -409,6 +409,10 @@ MonoBehaviour:
   _playerShipUIPrefab: {fileID: 1000012950752530, guid: 1c44b9bb913cb3a4282b957f349ef8a7,
     type: 2}
   _shipsParent: {fileID: 224000010497055372}
+  _blueforShipPrefab: {fileID: 1000010823524112, guid: 1e645bd4d68a42548868b77c18219c34,
+    type: 2}
+  _redforShipPrefab: {fileID: 1000010968728608, guid: 9b54a6b294dee764c851584b035bbe26,
+    type: 2}
 --- !u!114 &114000014156944320
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -11,7 +11,9 @@ public class Ship : MonoBehaviour
     [SerializeField] private float _repairSpeed = 5f;
     [SerializeField] private string _shipName;
     [SerializeField] private Side _side;
-    
+
+    private bool _initialized;
+
     public float MaxHealth
     {
         get { return _maxHealth; }
@@ -49,6 +51,22 @@ public class Ship : MonoBehaviour
     public Actions Action { get; private set; }
 
     protected GameManager GameManager { get; private set; }
+
+    public virtual void Initialize(ShipDescription description)
+    {
+        if (_initialized)
+        {
+            throw new InvalidOperationException("The ship is already initialized.");
+        }
+
+        _maxHealth = description.MaxHealth;
+        _damage = description.Damage;
+        _repairSpeed = description.RepairSpeed;
+        _shipName = description.ShipName;
+        _side = description.Side;
+
+        _initialized = true;
+    }
 
     public virtual void CalculateRound()
     {
@@ -122,6 +140,7 @@ public class Ship : MonoBehaviour
 
     protected virtual void Start()
     {
+        _initialized = true;
         Health = MaxHealth;
         GameManager = FindObjectOfType<GameManager>();
         var text = GetComponentInChildren<Text>();
