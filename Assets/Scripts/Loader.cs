@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 public class Loader : MonoBehaviour
 {
     private const string MainMenuScene = "main";
-    private const string BattleScene = "battle";
     private const string GameOverScene = "gameOver";
     private const string TestMissionScene = "testMission";
 
@@ -16,7 +15,6 @@ public class Loader : MonoBehaviour
     public void LoadTestMission()
     {
         SceneManager.LoadScene(TestMissionScene, LoadSceneMode.Single);
-        SceneManager.LoadScene(BattleScene, LoadSceneMode.Additive);
     }
 
     public void LoadGameOver()

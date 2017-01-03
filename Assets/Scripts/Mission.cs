@@ -9,12 +9,7 @@ public abstract class Mission : MonoBehaviour
     
     protected GameManager GameManager
     {
-        get { return _gameManager; }
-    }
-
-    protected virtual void Start()
-    {
-        _gameManager = FindObjectOfType<GameManager>();
+        get { return _gameManager ?? (_gameManager = FindObjectOfType<GameManager>()); }
     }
 
     protected virtual IEnumerator StartMission()
